@@ -48,7 +48,7 @@ jobs:
           fi
 
       - name: Build with Maven Wrapper
-        run: ./mvn-exec.sh clean verify
+        run: ./mvnw clean verify
 
       - name: Upload artifacts
         if: always()
