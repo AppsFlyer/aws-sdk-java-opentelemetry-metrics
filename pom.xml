@@ -119,22 +119,6 @@
                     <version>3.1.2</version>
                 </plugin>
 
-                <!-- Maven GPG Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
                 <!-- Maven Source Plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -170,8 +154,9 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/com.appsflyer/aws-sdk-java-opentelemetry-metrics</url>
         </snapshotRepository>
         <repository>
             <id>github</id>
@@ -191,22 +176,6 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- Maven GPG Plugin -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
                     <!-- Maven Source Plugin -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
