@@ -1,0 +1,71 @@
+name: Build and Deploy
+
+on:
+  workflow_call:
+    inputs:
+      is_snapshot:
+        required: true
+        type: boolean
+      version_regex:
+        required: true
+        type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        java-version:
+          - '17'
+          - '21'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java-version }} on ${{ matrix.os }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'corretto'
+          cache: maven
+
+      - name: Grant execute permission for Maven Wrapper
+        run: chmod +x mvnw
+
+      - name: Get Project Version
+        id: get_version
+        run: |
+          VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Validate Version with Regex
+        run: |
+          if [[ "${{ env.VERSION }}" =~ ${{ inputs.version_regex }} ]]; then
+            echo "Version ${{ env.VERSION }} matches the regex ${{ inputs.version_regex }}. Proceeding..."
+          else
+            echo "Version ${{ env.VERSION }} does not match the regex ${{ inputs.version_regex }}. Failing..."
+            exit 1
+          fi
+
+      - name: Build with Maven Wrapper
+        run: ./mvnw clean verify
+
+      - name: Deploy SNAPSHOT or Release
+        run: |
+          if [[ "$IS_SNAPSHOT" == "true" ]]; then
+            echo "Deploying SNAPSHOT version..."
+            mvn --batch-mode -DskipTests deploy -P snapshot
+          else
+            echo "Deploying RELEASE version..."
+            mvn --batch-mode -DskipTests deploy -P release
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IS_SNAPSHOT: ${{ inputs.is_snapshot }}
