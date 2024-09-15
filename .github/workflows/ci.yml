@@ -12,9 +12,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         os:
@@ -48,7 +46,7 @@ jobs:
             ./mvnw clean verify
           fi
 
-      - name: Upload test results
+      - name: Upload test results, OS ${{ matrix.os }}, JDK ${{ matrix.java-version }}
         if: always()
         uses: actions/upload-artifact@v3
         with:
