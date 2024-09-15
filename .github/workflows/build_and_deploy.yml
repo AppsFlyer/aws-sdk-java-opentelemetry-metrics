@@ -11,16 +11,12 @@ on:
         type: string
 
 jobs:
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-        java-version:
-          - '17'
-          - '21'
+        os: [ ubuntu-latest, macos-latest ]
+        java-version: [ '17', '21' ]
 
     steps:
       - name: Checkout code
@@ -33,8 +29,8 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      - name: Grant execute permission for Maven Wrapper
-        run: chmod +x mvnw
+      - name: Grant execute permission for mvn-exec.sh
+        run: chmod +x ./mvnw
 
       - name: Get Project Version
         id: get_version
@@ -44,24 +40,49 @@ jobs:
 
       - name: Validate Version with Regex
         run: |
-          if [[ "${{ env.VERSION }}" =~ ${{ inputs.version_regex }} ]]; then
-            echo "Version ${{ env.VERSION }} matches the regex ${{ inputs.version_regex }}. Proceeding..."
+          if [[ "${{ env.VERSION }}" =~ ${{ inputs.version_check }} ]]; then
+            echo "Version ${{ env.VERSION }} matches the regex ${{ inputs.version_check }}. Proceeding..."
           else
-            echo "Version ${{ env.VERSION }} does not match the regex ${{ inputs.version_regex }}. Failing..."
+            echo "Version ${{ env.VERSION }} does not match the regex ${{ inputs.version_check }}. Failing..."
             exit 1
           fi
 
       - name: Build with Maven Wrapper
-        run: ./mvnw clean verify
+        run: ./mvn-exec.sh clean verify
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-artifacts - JDK ${{ matrix.java-version }} on ${{ matrix.os }}
+          path: target/
+
+  deploy:
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Grant execute permission for Maven Wrapper
+        run: chmod +x ./mvnw
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: built-artifacts
 
       - name: Deploy SNAPSHOT or Release
         run: |
           if [[ "$IS_SNAPSHOT" == "true" ]]; then
             echo "Deploying SNAPSHOT version..."
-            ./mvnw --batch-mode -DskipTests deploy
+            ./mvnw --batch-mode -DskipTests deploy -P snapshot
           else
             echo "Deploying RELEASE version..."
-            ./mvnw --batch-mode -DskipTests deploy
+            ./mvnw --batch-mode -DskipTests deploy -P release
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
