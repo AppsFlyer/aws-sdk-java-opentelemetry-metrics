@@ -10,7 +10,7 @@ on:
 
 jobs:
   call-build-and-deploy:
-    uses: ./.github/workflows/build_and_deploy.yml@main
+    uses: ./.github/workflows/build_and_deploy.yml
     with:
       is_snapshot: false
       version_regex: "^[^\\s-]+$"  # Ensure the version does not contain -SNAPSHOT
