@@ -9,6 +9,9 @@ on:
       version_regex:
         required: true
         type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
 
 jobs:
   build_and_deploy:
