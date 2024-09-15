@@ -14,5 +14,3 @@ jobs:
     with:
       is_snapshot: true
       version_regex: "-SNAPSHOT$"   # Ensure the version ends with -SNAPSHOT
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -14,5 +14,3 @@ jobs:
     with:
       is_snapshot: false
       version_regex: "^[^\\s-]+$"  # Ensure the version does not contain -SNAPSHOT
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
