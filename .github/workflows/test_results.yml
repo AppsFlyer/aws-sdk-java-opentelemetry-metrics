@@ -2,7 +2,8 @@ name: Test Results
 
 on:
   workflow_run:
-    workflows: ["Java CI"]
+    workflows:
+      - "Branch CI (Snapshot)"
     types:
       - completed
 
