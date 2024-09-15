@@ -156,12 +156,12 @@
         <snapshotRepository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/com.appsflyer/aws-sdk-java-opentelemetry-metrics</url>
+            <url>https://maven.pkg.github.com/appsflyer/aws-sdk-java-opentelemetry-metrics</url>
         </snapshotRepository>
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/com.appsflyer/aws-sdk-java-opentelemetry-metrics</url>
+            <url>https://maven.pkg.github.com/appsflyer/aws-sdk-java-opentelemetry-metrics</url>
         </repository>
     </distributionManagement>
 
