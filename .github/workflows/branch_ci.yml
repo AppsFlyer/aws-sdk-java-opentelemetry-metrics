@@ -2,11 +2,7 @@ name: Branch CI (Snapshot)
 
 on:
   push:
-    branches-ignore:
-      - main
   pull_request:
-    branches-ignore:
-      - main
 
 jobs:
   my_test:
