@@ -40,7 +40,7 @@ jobs:
 
       - name: Validate Version with Regex
         run: |
-          if [[ "${{ env.VERSION }}" =~ ${{ inputs.version_check }} ]]; then
+          if [[ "${{ env.VERSION }}" =~ ${{ inputs.version_regex }} ]]; then
             echo "Version ${{ env.VERSION }} matches the regex ${{ inputs.version_check }}. Proceeding..."
           else
             echo "Version ${{ env.VERSION }} does not match the regex ${{ inputs.version_check }}. Failing..."
