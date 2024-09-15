@@ -74,10 +74,10 @@ jobs:
         run: |
           if [[ "$IS_SNAPSHOT" == "true" ]]; then
             echo "Deploying SNAPSHOT version..."
-            ./mvnw --batch-mode -DskipTests deploy -P snapshot
+            ./mvnw --batch-mode -DskipTests deploy
           else
             echo "Deploying RELEASE version..."
-            ./mvnw --batch-mode -DskipTests deploy -P release
+            ./mvnw --batch-mode -DskipTests deploy
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
