@@ -52,7 +52,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results - JDK ${{ matrix.java-version }} on ${{ matrix.os }}
           path: target/surefire-reports/*.xml
