@@ -10,6 +10,9 @@ on:
 
 jobs:
   call-build-and-deploy:
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/build_and_deploy.yml
     with:
       is_snapshot: true
