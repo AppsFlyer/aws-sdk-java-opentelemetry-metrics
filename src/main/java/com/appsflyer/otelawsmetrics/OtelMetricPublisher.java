@@ -24,6 +24,8 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class OtelMetricPublisher implements MetricPublisher {
     private static final Logger log = LoggerFactory.getLogger(OtelMetricPublisher.class);
+    private static final String DEFAULT_METRIC_PREFIX = "aws.sdk";
+
     private final Map<String, Map<Boolean, Map<Integer, Attributes>>> perRequestAttributesCache = new ConcurrentHashMap<>();
     private final Map<Attributes, Map<String, Attributes>> perAttemptAttributesCache = new ConcurrentHashMap<>();
     private final Map<Attributes, Map<Integer, Attributes>> perHttpAttributesCache = new ConcurrentHashMap<>();
@@ -33,6 +35,10 @@ public class OtelMetricPublisher implements MetricPublisher {
     private final Map<String, MetricStrategy> perRequestMetrics;
     private final Map<String, MetricStrategy> perAttemptMetrics;
     private final Map<String, MetricStrategy> httpMetrics;
+
+    public OtelMetricPublisher(OpenTelemetry openTelemetry) {
+        this(openTelemetry, DEFAULT_METRIC_PREFIX);
+    }
 
     public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix) {
         this(openTelemetry, metricPrefix, ForkJoinPool.commonPool());
