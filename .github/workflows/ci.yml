@@ -2,10 +2,13 @@ name: Java CI
 
 on:
   push:
-    branches: [ main ]
-    tags: [ '*' ]  # This triggers the workflow on any tag push
+    branches:
+      - main
+    tags:
+      - '*'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -50,7 +53,6 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -70,8 +72,19 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       - name: Grant execute permission for Maven Wrapper
-        if: runner.os != 'Windows'
         run: chmod +x mvnw
+
+      - name: Get Project Version
+        id: get_version
+        run: echo "VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Determine if SNAPSHOT Version
+        run: |
+          if [[ "${{ env.VERSION }}" == *"-SNAPSHOT" ]]; then
+            echo "IS_SNAPSHOT=true" >> $GITHUB_ENV
+          else
+            echo "IS_SNAPSHOT=false" >> $GITHUB_ENV
+          fi
 
       - name: Deploy to Maven Central
         run: ./mvnw clean deploy -P release
