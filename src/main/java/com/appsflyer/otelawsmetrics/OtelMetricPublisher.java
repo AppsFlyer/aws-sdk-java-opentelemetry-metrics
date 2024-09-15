@@ -34,14 +34,13 @@ public class OtelMetricPublisher implements MetricPublisher {
     private final Map<String, MetricStrategy> perAttemptMetrics;
     private final Map<String, MetricStrategy> httpMetrics;
 
+    public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix) {
+        this(openTelemetry, metricPrefix, ForkJoinPool.commonPool());
+    }
+
     public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix, Executor executor) {
         this.metricPrefix = metricPrefix;
-        if (executor == null) {
-            log.warn("An internal executor is not provided. This may impact the performance of the application. Falling back to the common ForkJoinPool.");
-            this.executor = ForkJoinPool.commonPool();
-        } else {
-            this.executor = executor;
-        }
+        this.executor = executor;
 
         Meter meter = openTelemetry.getMeter("aws.sdk");
 
