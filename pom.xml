@@ -66,13 +66,6 @@
             <version>${software.amazon.awssdk.version}</version>
         </dependency>
 
-        <!-- AWS SDK Metrics Interface -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>metrics-spi</artifactId>
-            <version>${software.amazon.awssdk.version}</version>
-        </dependency>
-
         <!-- JUnit for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
