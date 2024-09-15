@@ -50,12 +50,12 @@ jobs:
       - name: Build with Maven Wrapper
         run: ./mvnw clean verify
 
-      - name: Upload artifacts
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: built-artifacts - JDK ${{ matrix.java-version }} on ${{ matrix.os }}
-          path: target/
+          name: test-results - JDK ${{ matrix.java-version }} on ${{ matrix.os }}
+          path: target/surefire-reports/*.xml
 
   deploy:
     needs: build
@@ -69,11 +69,6 @@ jobs:
 
       - name: Grant execute permission for Maven Wrapper
         run: chmod +x ./mvnw
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: built-artifacts
 
       - name: Deploy SNAPSHOT or Release
         run: |
