@@ -5,6 +5,8 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.Meter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.core.metrics.CoreMetric;
+import software.amazon.awssdk.http.HttpMetric;
 import software.amazon.awssdk.metrics.MetricCollection;
 import software.amazon.awssdk.metrics.MetricPublisher;
 import software.amazon.awssdk.metrics.MetricRecord;
@@ -27,11 +29,13 @@ public class OtelMetricPublisher implements MetricPublisher {
     private final Map<Attributes, Map<Integer, Attributes>> perHttpAttributesCache = new ConcurrentHashMap<>();
 
     private final Executor executor;
+    private final String metricPrefix;
     private final Map<String, MetricStrategy> perRequestMetrics;
     private final Map<String, MetricStrategy> perAttemptMetrics;
     private final Map<String, MetricStrategy> httpMetrics;
 
-    public OtelMetricPublisher(OpenTelemetry openTelemetry, Executor executor) {
+    public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix, Executor executor) {
+        this.metricPrefix = metricPrefix;
         if (executor == null) {
             log.warn("An internal executor is not provided. This may impact the performance of the application. Falling back to the common ForkJoinPool.");
             this.executor = ForkJoinPool.commonPool();
@@ -39,7 +43,7 @@ public class OtelMetricPublisher implements MetricPublisher {
             this.executor = executor;
         }
 
-        Meter meter = openTelemetry.getMeter("dinamita.ddb");
+        Meter meter = openTelemetry.getMeter("aws.sdk");
 
         perRequestMetrics = initializePerRequestStrategies(meter);
         perAttemptMetrics = initializeCoreStrategies(meter);
@@ -61,77 +65,77 @@ public class OtelMetricPublisher implements MetricPublisher {
     }
 
     private Map<String, MetricStrategy> initializePerRequestStrategies(Meter meter) {
-        return Map.of("ApiCallDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.api_call_duration",
+        return Map.of(CoreMetric.API_CALL_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".api_call_duration",
                         "The total time taken to finish a request (inclusive of all retries)")),
 
-                "CredentialsFetchDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.credentials_fetch_duration",
+                CoreMetric.CREDENTIALS_FETCH_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".credentials_fetch_duration",
                         "The time taken to fetch AWS signing credentials for the request")),
 
-                "EndpointResolveDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.endpoint_resolve_duration",
+                CoreMetric.ENDPOINT_RESOLVE_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".endpoint_resolve_duration",
                         "The duration of time it took to resolve the endpoint used for the API call")),
 
-                "MarshallingDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.marshalling_duration",
+                CoreMetric.MARSHALLING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".marshalling_duration",
                         "The time it takes to marshall an SDK request to an HTTP request")),
 
-                "TokenFetchDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.token_fetch_duration",
+                CoreMetric.TOKEN_FETCH_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".token_fetch_duration",
                         "The time taken to fetch token signing credentials for the request")));
     }
 
     private Map<String, MetricStrategy> initializeCoreStrategies(Meter meter) {
 
-        return Map.of("BackoffDelayDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.backoff_delay_duration",
+        return Map.of(CoreMetric.BACKOFF_DELAY_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".backoff_delay_duration",
                         "The duration of time the SDK waited before this API call attempt")),
 
-                "ReadThroughput", new MetricStrategyWithoutErrors(new DoubleHistogramStrategy(meter,
-                        "dinamita.ddb.read_throughput",
+                CoreMetric.READ_THROUGHPUT.name(), new MetricStrategyWithoutErrors(new DoubleHistogramStrategy(meter,
+                        metricPrefix + ".read_throughput",
                         "The read throughput of the client in bytes/second")),
 
-                "ServiceCallDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.service_call_duration",
+                CoreMetric.SERVICE_CALL_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".service_call_duration",
                         "The time it takes to connect to the service, send the request, and receive the HTTP status code and header from the response")),
 
-                "SigningDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.signing_duration",
+                CoreMetric.SIGNING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".signing_duration",
                         "The time it takes to sign the HTTP request")),
 
-                "TimeToFirstByte", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.time_to_first_byte",
+                CoreMetric.TIME_TO_FIRST_BYTE.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".time_to_first_byte",
                         "Elapsed time from sending the HTTP request (including acquiring a connection) to receiving the first byte of the headers in the response")),
 
-                "TimeToLastByte", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.time_to_last_byte",
+                CoreMetric.TIME_TO_LAST_BYTE.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".time_to_last_byte",
                         "Elapsed time from sending the HTTP request (including acquiring a connection) to receiving the last byte of the response")),
 
-                "UnmarshallingDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.unmarshalling_duration",
+                CoreMetric.UNMARSHALLING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".unmarshalling_duration",
                         "The time it takes to unmarshall an HTTP response to an SDK response")));
     }
 
     private Map<String, MetricStrategy> initializeHttpStrategies(Meter meter) {
-        return Map.of("AvailableConcurrency", new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        "dinamita.ddb.available_concurrency",
+        return Map.of(HttpMetric.AVAILABLE_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                        metricPrefix + ".available_concurrency",
                         "The number of remaining concurrent requests that can be supported by the HTTP client without needing to establish another connection")),
 
-                "ConcurrencyAcquireDuration", new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        "dinamita.ddb.concurrency_acquire_duration",
+                HttpMetric.CONCURRENCY_ACQUIRE_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                        metricPrefix + ".concurrency_acquire_duration",
                         "The time taken to acquire a channel from the connection pool")),
 
-                "LeasedConcurrency", new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        "dinamita.ddb.leased_concurrency",
+                HttpMetric.LEASED_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                        metricPrefix + ".leased_concurrency",
                         "The number of request currently being executed by the HTTP client")),
 
-                "MaxConcurrency", new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        "dinamita.ddb.max_concurrency",
+                HttpMetric.MAX_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                        metricPrefix + ".max_concurrency",
                         "The max number of concurrent requests supported by the HTTP client")),
 
-                "PendingConcurrencyAcquires", new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        "dinamita.ddb.pending_concurrency_acquires",
+                HttpMetric.PENDING_CONCURRENCY_ACQUIRES.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                        metricPrefix + ".pending_concurrency_acquires",
                         "The number of requests that are blocked, waiting for another TCP connection or a new stream to be available from the connection pool")));
     }
 
@@ -159,9 +163,9 @@ public class OtelMetricPublisher implements MetricPublisher {
         Map<String, MetricRecord<?>> metricsMap = extractMetrics(requestMetrics);
 
         // Extract attributes for per-request metrics
-        String operationName = getStringMetricValue(metricsMap, "OperationName");
-        boolean isSuccess = getBooleanMetricValue(metricsMap, "ApiCallSuccessful");
-        int retryCount = getIntMetricValue(metricsMap, "RetryCount");
+        String operationName = getStringMetricValue(metricsMap, CoreMetric.OPERATION_NAME.name());
+        boolean isSuccess = getBooleanMetricValue(metricsMap, CoreMetric.API_CALL_SUCCESSFUL.name());
+        int retryCount = getIntMetricValue(metricsMap, CoreMetric.RETRY_COUNT.name());
         Attributes attributes = toPerRequestAttributes(operationName, isSuccess, retryCount);
 
         // Report per-request metrics
@@ -177,7 +181,7 @@ public class OtelMetricPublisher implements MetricPublisher {
         Map<String, MetricRecord<?>> metricsMap = extractMetrics(attemptMetrics);
 
         // Extract ErrorType if present
-        String errorType = getStringMetricValue(metricsMap, "ErrorType");
+        String errorType = getStringMetricValue(metricsMap, CoreMetric.ERROR_TYPE.name());
 
         // Build attributes including attempt number and error type
         Attributes attributes = toAttemptAttributes(parentAttributes, errorType);
@@ -195,7 +199,7 @@ public class OtelMetricPublisher implements MetricPublisher {
         Map<String, MetricRecord<?>> metricsMap = extractMetrics(httpMetricsCollection);
 
         // Extract HTTP status code
-        int httpStatusCode = getIntMetricValue(metricsMap, "HttpStatusCode");
+        int httpStatusCode = getIntMetricValue(metricsMap, HttpMetric.HTTP_STATUS_CODE.name());
         Attributes attributes = toHttpAttributes(parentAttributes, httpStatusCode);
 
         // Report HTTP metrics
