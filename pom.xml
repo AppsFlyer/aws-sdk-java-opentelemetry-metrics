@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.appsflyer</groupId>
+    <artifactId>aws-sdk-java-opentelemetry-metrics</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>AWS SDK Java OpenTelemetry Metrics</name>
+    <description>OpenTelemetry Metric Publisher for AWS SDK for Java</description>
+    <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <opentelemetry.version>1.24.0</opentelemetry.version>
+        <software.amazon.awssdk.version>2.27.23</software.amazon.awssdk.version>
+        <slf4j-api.version>2.0.7</slf4j-api.version>
+        <junit-jupiter.version>5.10.3</junit-jupiter.version>
+    </properties>
+
+    <dependencies>
+        <!-- OpenTelemetry API -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>${opentelemetry.version}</version>
+        </dependency>
+
+        <!-- AWS SDK Metrics Interface -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>metrics-spi</artifactId>
+            <version>${software.amazon.awssdk.version}</version>
+        </dependency>
+
+        <!-- SLF4J API for logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <!-- JUnit for testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Maven Compiler Plugin for Java 8+ -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Surefire Plugin for running tests -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
