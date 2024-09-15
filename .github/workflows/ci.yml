@@ -1,9 +1,9 @@
 name: Java CI
 
 on:
-  # Triggers the workflow on push or pull request events for the main branch
   push:
     branches: [ main ]
+    tags: [ '*' ]  # This triggers the workflow on any tag push
   pull_request:
     branches: [ main ]
 
@@ -14,6 +14,7 @@ jobs:
 
     strategy:
       matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
         java-version: [ '17', '21' ]
 
     steps:
@@ -27,8 +28,17 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      - name: Build with Maven
-        run: mvn clean verify
+      - name: Grant execute permission for Maven Wrapper
+        if: runner.os != 'Windows'
+        run: chmod +x mvnw
+
+      - name: Build with Maven Wrapper
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            ./mvnw.cmd clean verify
+          else
+            ./mvnw clean verify
+          fi
 
       - name: Upload test results
         if: always()
@@ -45,11 +55,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'temurin'
+          java-version: '17'
+          distribution: 'corretto'
 
       - name: Set up GPG
         run: |
@@ -59,8 +69,12 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
+      - name: Grant execute permission for Maven Wrapper
+        if: runner.os != 'Windows'
+        run: chmod +x mvnw
+
       - name: Deploy to Maven Central
-        run: mvn clean deploy -P release
+        run: ./mvnw clean deploy -P release
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
