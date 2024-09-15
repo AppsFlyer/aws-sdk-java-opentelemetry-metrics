@@ -71,14 +71,6 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Set up GPG
-        run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
-          echo "default-key ${GPG_KEY_ID}" >> ~/.gnupg/gpg.conf
-        env:
-          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-
       - name: Grant execute permission for Maven Wrapper
         run: chmod +x mvnw
 
