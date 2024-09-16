@@ -70,78 +70,70 @@ public class OtelMetricPublisher implements MetricPublisher {
     }
 
     private Map<String, MetricStrategy> initializePerRequestStrategies(Meter meter) {
-        return Map.of(CoreMetric.API_CALL_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "api_call_duration",
-                        "The total time taken to finish a request (inclusive of all retries)")),
-
-                CoreMetric.CREDENTIALS_FETCH_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "credentials_fetch_duration",
-                        "The time taken to fetch AWS signing credentials for the request")),
-
-                CoreMetric.ENDPOINT_RESOLVE_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "endpoint_resolve_duration",
-                        "The duration of time it took to resolve the endpoint used for the API call")),
-
-                CoreMetric.MARSHALLING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "marshalling_duration",
-                        "The time it takes to marshall an SDK request to an HTTP request")),
-
-                CoreMetric.TOKEN_FETCH_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "token_fetch_duration",
-                        "The time taken to fetch token signing credentials for the request")));
+        Map<String, MetricStrategy> strategyMap = new HashMap<>();
+        strategyMap.put(CoreMetric.API_CALL_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "api_call_duration",
+                "The total time taken to finish a request (inclusive of all retries)")));
+        strategyMap.put(CoreMetric.CREDENTIALS_FETCH_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "credentials_fetch_duration",
+                "The time taken to fetch AWS signing credentials for the request")));
+        strategyMap.put(CoreMetric.ENDPOINT_RESOLVE_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "endpoint_resolve_duration",
+                "The duration of time it took to resolve the endpoint used for the API call")));
+        strategyMap.put(CoreMetric.MARSHALLING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "marshalling_duration",
+                "The time it takes to marshall an SDK request to an HTTP request")));
+        strategyMap.put(CoreMetric.TOKEN_FETCH_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "token_fetch_duration",
+                "The time taken to fetch token signing credentials for the request")));
+        return strategyMap;
     }
 
     private Map<String, MetricStrategy> initializeCoreStrategies(Meter meter) {
 
-        return Map.of(CoreMetric.BACKOFF_DELAY_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "backoff_delay_duration",
-                        "The duration of time the SDK waited before this API call attempt")),
-
-                CoreMetric.READ_THROUGHPUT.name(), new MetricStrategyWithoutErrors(new DoubleHistogramStrategy(meter,
-                        metricPrefix + "read_throughput",
-                        "The read throughput of the client in bytes/second")),
-
-                CoreMetric.SERVICE_CALL_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "service_call_duration",
-                        "The time it takes to connect to the service, send the request, and receive the HTTP status code and header from the response")),
-
-                CoreMetric.SIGNING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "signing_duration",
-                        "The time it takes to sign the HTTP request")),
-
-                CoreMetric.TIME_TO_FIRST_BYTE.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "time_to_first_byte",
-                        "Elapsed time from sending the HTTP request (including acquiring a connection) to receiving the first byte of the headers in the response")),
-
-                CoreMetric.TIME_TO_LAST_BYTE.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "time_to_last_byte",
-                        "Elapsed time from sending the HTTP request (including acquiring a connection) to receiving the last byte of the response")),
-
-                CoreMetric.UNMARSHALLING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "unmarshalling_duration",
-                        "The time it takes to unmarshall an HTTP response to an SDK response")));
+        Map<String, MetricStrategy> strategyMap = new HashMap<>();
+        strategyMap.put(CoreMetric.BACKOFF_DELAY_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "backoff_delay_duration",
+                "The duration of time the SDK waited before this API call attempt")));
+        strategyMap.put(CoreMetric.READ_THROUGHPUT.name(), new MetricStrategyWithoutErrors(new DoubleHistogramStrategy(meter,
+                metricPrefix + "read_throughput",
+                "The read throughput of the client in bytes/second")));
+        strategyMap.put(CoreMetric.SERVICE_CALL_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "service_call_duration",
+                "The time it takes to connect to the service, send the request, and receive the HTTP status code and header from the response")));
+        strategyMap.put(CoreMetric.SIGNING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "signing_duration",
+                "The time it takes to sign the HTTP request")));
+        strategyMap.put(CoreMetric.TIME_TO_FIRST_BYTE.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "time_to_first_byte",
+                "Elapsed time from sending the HTTP request (including acquiring a connection) to receiving the first byte of the headers in the response")));
+        strategyMap.put(CoreMetric.TIME_TO_LAST_BYTE.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "time_to_last_byte",
+                "Elapsed time from sending the HTTP request (including acquiring a connection) to receiving the last byte of the response")));
+        strategyMap.put(CoreMetric.UNMARSHALLING_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "unmarshalling_duration",
+                "The time it takes to unmarshall an HTTP response to an SDK response")));
+        return strategyMap;
     }
 
     private Map<String, MetricStrategy> initializeHttpStrategies(Meter meter) {
-        return Map.of(HttpMetric.AVAILABLE_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        metricPrefix + "available_concurrency",
-                        "The number of remaining concurrent requests that can be supported by the HTTP client without needing to establish another connection")),
-
-                HttpMetric.CONCURRENCY_ACQUIRE_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
-                        metricPrefix + "concurrency_acquire_duration",
-                        "The time taken to acquire a channel from the connection pool")),
-
-                HttpMetric.LEASED_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        metricPrefix + "leased_concurrency",
-                        "The number of request currently being executed by the HTTP client")),
-
-                HttpMetric.MAX_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        metricPrefix + "max_concurrency",
-                        "The max number of concurrent requests supported by the HTTP client")),
-
-                HttpMetric.PENDING_CONCURRENCY_ACQUIRES.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
-                        metricPrefix + "pending_concurrency_acquires",
-                        "The number of requests that are blocked, waiting for another TCP connection or a new stream to be available from the connection pool")));
+        Map<String, MetricStrategy> strategyMap = new HashMap<>();
+        strategyMap.put(HttpMetric.AVAILABLE_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                metricPrefix + "available_concurrency",
+                "The number of remaining concurrent requests that can be supported by the HTTP client without needing to establish another connection")));
+        strategyMap.put(HttpMetric.CONCURRENCY_ACQUIRE_DURATION.name(), new MetricStrategyWithoutErrors(new DurationStrategy(meter,
+                metricPrefix + "concurrency_acquire_duration",
+                "The time taken to acquire a channel from the connection pool")));
+        strategyMap.put(HttpMetric.LEASED_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                metricPrefix + "leased_concurrency",
+                "The number of request currently being executed by the HTTP client")));
+        strategyMap.put(HttpMetric.MAX_CONCURRENCY.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                metricPrefix + "max_concurrency",
+                "The max number of concurrent requests supported by the HTTP client")));
+        strategyMap.put(HttpMetric.PENDING_CONCURRENCY_ACQUIRES.name(), new MetricStrategyWithoutErrors(new LongHistogramStrategy(meter,
+                metricPrefix + "pending_concurrency_acquires",
+                "The number of requests that are blocked, waiting for another TCP connection or a new stream to be available from the connection pool")));
+        return strategyMap;
     }
 
     private void publishInternal(MetricCollection metricCollection) {

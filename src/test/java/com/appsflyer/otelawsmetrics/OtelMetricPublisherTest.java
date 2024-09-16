@@ -29,7 +29,6 @@ class OtelMetricPublisherTest {
 
     private ExecutorService executor;
     private InMemoryMetricReader metricReader;
-    private SdkMeterProvider sdkMeterProvider;
     private MetricPublisher metricPublisher;
 
     @BeforeEach
@@ -41,7 +40,7 @@ class OtelMetricPublisherTest {
         metricReader = InMemoryMetricReader.create();
 
         // Set up the SdkMeterProvider with the metric reader
-        sdkMeterProvider = SdkMeterProvider.builder()
+        SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
                 .registerMetricReader(metricReader)
                 .build();
 
@@ -99,7 +98,7 @@ class OtelMetricPublisherTest {
 
         // For API_CALL_DURATION
         MetricRecord<Duration> apiCallDurationRecord = new DefaultMetricRecord<>(CoreMetric.API_CALL_DURATION, Duration.ofNanos(100));
-        metrics.put(CoreMetric.API_CALL_DURATION, List.of(apiCallDurationRecord));
+        metrics.put(CoreMetric.API_CALL_DURATION, Collections.singletonList(apiCallDurationRecord));
 
         // For OPERATION_NAME
         MetricRecord<String> operationNameRecord = new DefaultMetricRecord<>(CoreMetric.OPERATION_NAME, "GetItem");
