@@ -23,7 +23,8 @@ public class DurationStrategy implements MetricStrategy {
 
     @Override
     public void record(MetricRecord<?> metricRecord, Attributes attributes) {
-        if (metricRecord.value() instanceof Duration duration) {
+        if (metricRecord.value() instanceof Duration) {
+            Duration duration = (Duration) metricRecord.value();
             histogram.record(duration.toNanos(), attributes);
         } else {
             log.warn("Invalid value type for duration metric: {}", metricRecord.metric().name());

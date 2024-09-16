@@ -20,7 +20,8 @@ public class LongHistogramStrategy implements MetricStrategy {
 
     @Override
     public void record(MetricRecord<?> metricRecord, Attributes attributes) {
-        if (metricRecord.value() instanceof Number value) {
+        if (metricRecord.value() instanceof Number) {
+            Number value = (Number) metricRecord.value();
             histogram.record(value.longValue(), attributes);
         } else {
             log.warn("Invalid value type for a LongHistogram metric: {}", metricRecord.metric().name());
