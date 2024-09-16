@@ -28,7 +28,6 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.release>8</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <opentelemetry.version>1.24.0</opentelemetry.version>
         <software.amazon.awssdk.version>2.27.23</software.amazon.awssdk.version>
@@ -102,14 +101,13 @@
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Maven Compiler Plugin for Java 8+ -->
+                <!-- Maven Compiler Plugin for Java 8 -->
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.11.0</version>
                     <configuration>
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
-                        <release>${maven.compiler.release}</release>
                     </configuration>
                 </plugin>
             </plugins>
