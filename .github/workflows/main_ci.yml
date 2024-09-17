@@ -11,9 +11,6 @@ jobs:
       contents: read
       packages: write
     uses: ./.github/workflows/build.yml
-    with:
-      is_snapshot: false
-      version_regex: "^[^\\s-]+$"  # Ensure the version does not contain -SNAPSHOT
 
   deploy:
     needs: build
