@@ -29,11 +29,6 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      - name: Set Git user for release
-        run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
-
       - name: Grant execute permission for Maven Wrapper
         run: chmod +x ./mvnw
 
@@ -41,3 +36,5 @@ jobs:
         run: |
           echo "Releasing and bumping version..."
           ./mvnw release:prepare release:perform -Darguments=-DskipTests -B
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
