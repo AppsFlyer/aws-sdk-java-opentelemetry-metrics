@@ -4,7 +4,7 @@
 
     <groupId>com.appsflyer</groupId>
     <artifactId>aws-sdk-java-opentelemetry-metrics</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>AWS SDK Java OpenTelemetry Metrics</name>
     <description>OpenTelemetry Metric Publisher for AWS SDK for Java</description>
     <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics</url>
@@ -20,7 +20,7 @@
         <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</url>
         <connection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</connection>
         <developerConnection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</developerConnection>
-        <tag>aws-sdk-java-opentelemetry-metrics-1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
