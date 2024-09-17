@@ -20,10 +20,15 @@ public class MetricStrategyWithoutErrors implements MetricStrategy {
 
     @Override
     public void record(MetricRecord<?> metricRecord, Attributes attributes) {
+        if (metricRecord == null) {
+            log.warn("Received null metric record");
+            return;
+        }
+
         try {
             delegate.record(metricRecord, attributes);
         } catch (Exception e) {
-            String metricName = metricRecord == null ? "null" : metricRecord.metric().name();
+            String metricName = metricRecord.metric() == null ? "null" : metricRecord.metric().name();
             log.warn("Failed to record metric: {}", metricName, e);
         }
     }
