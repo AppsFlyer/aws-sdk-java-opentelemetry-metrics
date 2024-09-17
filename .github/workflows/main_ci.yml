@@ -40,4 +40,7 @@ jobs:
       - name: Bump Version and Release (Maven Release Plugin)
         run: |
           echo "Releasing and bumping version..."
-          ./mvnw release:prepare release:perform -Darguments=-DskipTests -B
+          ./mvnw release:prepare release:perform \
+            -Dscm.url=https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git \
+            -Dscm.developerConnection=scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git \
+            -Darguments=-DskipTests -B
