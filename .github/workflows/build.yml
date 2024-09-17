@@ -27,14 +27,15 @@ jobs:
           VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Validate Version with SNAPSHOT Suffix Check
+      - name: Validate Version with Suffix Check
+        if: endsWith(env.VERSION, '-SNAPSHOT')
+        run: echo "Version ${{ env.VERSION }} ends with -SNAPSHOT. Proceeding..."
+
+      - name: Fallback for Non-SNAPSHOT
+        if: "!endsWith(env.VERSION, '-SNAPSHOT')"
         run: |
-          if [[ endsWith(env.VERSION, '-SNAPSHOT') ]]; then
-            echo "Version ${{ env.VERSION }} is valid. Proceeding..."
-          else
-            echo "Expected SNAPSHOT version but found ${{ env.VERSION }}. Failing..."
-            exit 1
-          fi
+          echo "Expected SNAPSHOT version but found ${{ env.VERSION }}. Failing..."
+          exit 1
 
   build:
     needs: pre_build
