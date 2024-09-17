@@ -119,6 +119,10 @@
                     <configuration>
                         <pushChanges>true</pushChanges>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <scm>
+                            <connection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</connection>
+                            <developerConnection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</developerConnection>
+                        </scm>
                     </configuration>
                 </plugin>
             </plugins>
