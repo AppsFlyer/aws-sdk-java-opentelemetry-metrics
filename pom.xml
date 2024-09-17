@@ -122,6 +122,7 @@
                         <scm>
                             <connection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</connection>
                             <developerConnection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</developerConnection>
+                            <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics</url>
                         </scm>
                     </configuration>
                 </plugin>
