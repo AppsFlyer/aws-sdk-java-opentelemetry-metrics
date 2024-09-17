@@ -68,3 +68,14 @@ jobs:
         with:
           name: test-results - JDK ${{ matrix.java-version }} on ${{ matrix.os }}
           path: target/surefire-reports/*.xml
+
+  event_file:
+    needs: build
+    name: "Event File"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
