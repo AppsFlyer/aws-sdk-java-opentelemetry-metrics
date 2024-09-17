@@ -12,6 +12,17 @@ jobs:
       packages: write
     uses: ./.github/workflows/build.yml
 
+  event_file:
+    needs: build
+    name: "Event File"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
+
   deploy:
     needs: build
     permissions:
