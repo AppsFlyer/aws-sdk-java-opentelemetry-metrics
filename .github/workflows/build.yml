@@ -37,6 +37,7 @@ jobs:
           fi
 
   build:
+    needs: pre_build
     runs-on: ubuntu-latest
     strategy:
       matrix:
