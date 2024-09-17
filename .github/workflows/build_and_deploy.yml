@@ -41,9 +41,9 @@ jobs:
       - name: Validate Version with Regex
         run: |
           if [[ "${{ env.VERSION }}" =~ ${{ inputs.version_regex }} ]]; then
-            echo "Version ${{ env.VERSION }} matches the regex ${{ inputs.version_check }}. Proceeding..."
+            echo "Version ${{ env.VERSION }} matches the regex ${{ inputs.version_regex }}. Proceeding..."
           else
-            echo "Version ${{ env.VERSION }} does not match the regex ${{ inputs.version_check }}. Failing..."
+            echo "Version ${{ env.VERSION }} does not match the regex ${{ inputs.version_regex }}. Failing..."
             exit 1
           fi
 
@@ -77,15 +77,14 @@ jobs:
       - name: Grant execute permission for Maven Wrapper
         run: chmod +x ./mvnw
 
-      - name: Deploy SNAPSHOT or Release
+      - name: Bump Version and Release (Maven Release Plugin)
+        if: inputs.is_snapshot == 'false' && endsWith(env.VERSION, '-SNAPSHOT')
         run: |
-          if [[ "$IS_SNAPSHOT" == "true" ]]; then
-            echo "Deploying SNAPSHOT version..."
-            ./mvnw --batch-mode -DskipTests deploy
-          else
-            echo "Deploying RELEASE version..."
-            ./mvnw --batch-mode -DskipTests deploy
-          fi
+          echo "Releasing and bumping version..."
+          ./mvnw release:prepare release:perform -B
+
+      - name: Deploy SNAPSHOT
+        if: inputs.is_snapshot == 'true'
+        run: ./mvnw --batch-mode -DskipTests deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IS_SNAPSHOT: ${{ inputs.is_snapshot }}
