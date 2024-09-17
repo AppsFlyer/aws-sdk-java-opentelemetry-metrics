@@ -19,10 +19,9 @@
     </licenses>
 
     <scm>
+        <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</url>
         <connection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</connection>
-        <developerConnection>scm:git:git@github.com:AppsFlyer/aws-sdk-java-opentelemetry-metrics.git
-        </developerConnection>
-        <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics</url>
+        <developerConnection>scm:git:git@github.com:AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</developerConnection>
     </scm>
 
     <properties>
@@ -119,11 +118,6 @@
                     <configuration>
                         <pushChanges>true</pushChanges>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <scm>
-                            <connection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</connection>
-                            <developerConnection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</developerConnection>
-                            <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics</url>
-                        </scm>
                     </configuration>
                 </plugin>
             </plugins>
