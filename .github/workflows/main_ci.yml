@@ -6,11 +6,36 @@ on:
       - main
 
 jobs:
-  call-build-and-deploy:
+  build:
     permissions:
       contents: read
       packages: write
-    uses: ./.github/workflows/build_and_deploy.yml
+    uses: ./.github/workflows/build.yml
     with:
       is_snapshot: false
       version_regex: "^[^\\s-]+$"  # Ensure the version does not contain -SNAPSHOT
+
+  deploy:
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'corretto'
+          cache: maven
+
+      - name: Grant execute permission for Maven Wrapper
+        run: chmod +x ./mvnw
+
+      - name: Bump Version and Release (Maven Release Plugin)
+        run: |
+          echo "Releasing and bumping version..."
+          ./mvnw release:prepare release:perform -Darguments=-DskipTests -B
