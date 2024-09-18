@@ -39,6 +39,9 @@ jobs:
           java-version: '8'
           distribution: 'corretto'
           cache: maven
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
 
       - name: Grant execute permission for Maven Wrapper
         run: chmod +x ./mvnw
@@ -46,4 +49,5 @@ jobs:
       - name: Deploy SNAPSHOT
         run: ./mvnw --batch-mode -DskipTests -Darguments=-DskipTests deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

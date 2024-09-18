@@ -28,6 +28,20 @@ jobs:
           java-version: '8'
           distribution: 'corretto'
           cache: maven
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Set GPG Key for Signing
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "default-key ${GPG_KEY_ID}" >> ~/.gnupg/gpg.conf
+          echo "use-agent" >> ~/.gnupg/gpg.conf
+        env:
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       - name: Set Git user for release
         run: |
@@ -40,6 +54,12 @@ jobs:
       - name: Bump Version and Release (Maven Release Plugin)
         run: |
           echo "Releasing and bumping version..."
-          ./mvnw release:prepare release:perform -Darguments=-DskipTests -B
+          ./mvnw \
+            -Darguments=-DskipTests \
+            -Dgpg.keyname=${{ secrets.GPG_KEY_ID }} \
+            -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} \
+            release:prepare release:perform -B -P release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
