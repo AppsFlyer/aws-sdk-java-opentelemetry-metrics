@@ -4,7 +4,7 @@
 
     <groupId>com.appsflyer</groupId>
     <artifactId>aws-sdk-java-opentelemetry-metrics</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>AWS SDK Java OpenTelemetry Metrics</name>
     <description>OpenTelemetry Metric Publisher for AWS SDK for Java</description>
     <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics</url>
@@ -119,20 +119,36 @@
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
+
+                <!-- GPG Plugin for signing artifacts -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
     <distributionManagement>
         <snapshotRepository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/appsflyer/aws-sdk-java-opentelemetry-metrics</url>
+            <id>ossrh</id>
+            <name>OSSRH Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/appsflyer/aws-sdk-java-opentelemetry-metrics</url>
+            <id>ossrh</id>
+            <name>OSSRH Releases</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
