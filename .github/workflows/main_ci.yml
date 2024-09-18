@@ -57,7 +57,7 @@ jobs:
             -Darguments=-DskipTests \
             -Dgpg.keyname=${{ secrets.GPG_KEY_ID }} \
             -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} \
-            release:prepare release:perform -B
+            release:prepare release:perform -B -P release
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
