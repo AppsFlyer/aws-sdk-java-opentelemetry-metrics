@@ -4,7 +4,7 @@
 
     <groupId>com.appsflyer</groupId>
     <artifactId>aws-sdk-java-opentelemetry-metrics</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>AWS SDK Java OpenTelemetry Metrics</name>
     <description>OpenTelemetry Metric Publisher for AWS SDK for Java</description>
     <url>https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics</url>
@@ -22,6 +22,14 @@
         <developerConnection>scm:git:https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
+    <developers>
+        <developer>
+            <id>evg-tso</id>
+            <name>Yevgeni Tsodikov</name>
+            <email>evg.tso@gmail.com</email>
+        </developer>
+    </developers>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -167,7 +175,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.3.1</version>
+                        <version>3.2.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -182,7 +190,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.10.0</version>
+                        <version>3.5.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
