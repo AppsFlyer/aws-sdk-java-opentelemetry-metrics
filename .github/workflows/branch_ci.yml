@@ -44,7 +44,7 @@ jobs:
         run: chmod +x ./mvnw
 
       - name: Deploy SNAPSHOT
-        run: ./mvnw --batch-mode -DskipTests -Darguments=-DskipTests deploy -P release
+        run: ./mvnw --batch-mode -DskipTests -Darguments=-DskipTests deploy
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
