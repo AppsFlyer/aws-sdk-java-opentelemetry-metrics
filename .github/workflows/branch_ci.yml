@@ -40,14 +40,6 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      - name: Set up GPG for signing
-        run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode | gpg --batch --import
-          echo "default-key ${GPG_KEY_ID}" >> ~/.gnupg/gpg.conf
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-        env:
-          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-
       - name: Grant execute permission for Maven Wrapper
         run: chmod +x ./mvnw
 
