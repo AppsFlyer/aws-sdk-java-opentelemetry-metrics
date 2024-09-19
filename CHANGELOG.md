@@ -18,6 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the AWS SDK Java OpenTelemetry Metrics library.
 
-[1.0.1]: https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics/pull/18
+[1.0.1]: https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics/compare/aws-sdk-java-opentelemetry-metrics-1.0.0...aws-sdk-java-opentelemetry-metrics-1.0.1
 
-[1.0.0]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v1.0.0
+[1.0.0]: https://github.com/AppsFlyer/aws-sdk-java-opentelemetry-metrics/releases/tag/aws-sdk-java-opentelemetry-metrics-1.0.0
