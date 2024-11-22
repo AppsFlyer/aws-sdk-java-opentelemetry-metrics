@@ -25,6 +25,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class OtelMetricPublisher implements MetricPublisher {
     private static final Logger log = LoggerFactory.getLogger(OtelMetricPublisher.class);
     private static final String DEFAULT_METRIC_PREFIX = "aws.sdk";
+    private final Attributes baseAttributes;
 
     private final Map<String, Map<Boolean, Map<Integer, Attributes>>> perRequestAttributesCache = new ConcurrentHashMap<>();
     private final Map<Attributes, Map<String, Attributes>> perAttemptAttributesCache = new ConcurrentHashMap<>();
@@ -37,18 +38,24 @@ public class OtelMetricPublisher implements MetricPublisher {
     private final Map<String, MetricStrategy> httpMetrics;
 
     public OtelMetricPublisher(OpenTelemetry openTelemetry) {
-        this(openTelemetry, DEFAULT_METRIC_PREFIX);
+        this(openTelemetry, DEFAULT_METRIC_PREFIX,  ForkJoinPool.commonPool(), Attributes.empty());
     }
 
     public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix) {
-        this(openTelemetry, metricPrefix, ForkJoinPool.commonPool());
+        this(openTelemetry, metricPrefix,  ForkJoinPool.commonPool(), Attributes.empty());
     }
 
     public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix, Executor executor) {
+        this(openTelemetry, metricPrefix, executor, Attributes.empty());
+    }
+
+    public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix,
+                               Executor executor, Attributes baseAttributes) {
         this.metricPrefix = metricPrefix + ".";
         this.executor = executor;
+        this.baseAttributes = baseAttributes;
 
-        Meter meter = openTelemetry.getMeter("aws.sdk");
+        Meter meter = openTelemetry.getMeter(this.metricPrefix);
 
         perRequestMetrics = initializePerRequestStrategies(meter);
         perAttemptMetrics = initializeCoreStrategies(meter);
@@ -254,6 +261,7 @@ public class OtelMetricPublisher implements MetricPublisher {
                         .put("request_operation_name", nullSafeOperationName)
                         .put("request_is_success", isSuccess)
                         .put("request_retry_count", retryCount)
+                        .putAll(this.baseAttributes)
                         .build());
     }
 
@@ -278,4 +286,3 @@ public class OtelMetricPublisher implements MetricPublisher {
                                 .build());
     }
 }
-
