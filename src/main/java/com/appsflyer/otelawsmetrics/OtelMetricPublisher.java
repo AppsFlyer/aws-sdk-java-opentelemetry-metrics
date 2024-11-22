@@ -60,7 +60,6 @@ public class OtelMetricPublisher implements MetricPublisher {
         if (executor == null) {
             log.warn("An executor is not provided. The metrics will be published synchronously on the calling thread.");
         }
-
         this.metricPrefix = metricPrefix + ".";
         this.executor = executor;
         this.baseAttributes = baseAttributes;
