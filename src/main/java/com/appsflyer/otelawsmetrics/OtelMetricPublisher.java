@@ -13,6 +13,7 @@ import software.amazon.awssdk.metrics.MetricRecord;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
@@ -51,6 +52,15 @@ public class OtelMetricPublisher implements MetricPublisher {
 
     public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix,
                                Executor executor, Attributes baseAttributes) {
+
+        Objects.requireNonNull(metricPrefix, "metricPrefix must not be null");
+        Objects.requireNonNull(openTelemetry, "openTelemetry must not be null");
+        Objects.requireNonNull(baseAttributes, "baseAttributes must not be null");
+
+        if (executor == null) {
+            log.warn("An executor is not provided. The metrics will be published synchronously on the calling thread.");
+        }
+
         this.metricPrefix = metricPrefix + ".";
         this.executor = executor;
         this.baseAttributes = baseAttributes;
@@ -64,6 +74,11 @@ public class OtelMetricPublisher implements MetricPublisher {
 
     @Override
     public void publish(MetricCollection metricCollection) {
+        if (executor == null) {
+            publishInternal(metricCollection);
+            return;
+        }
+
         try {
             executor.execute(() -> publishInternal(metricCollection));
         } catch (RejectedExecutionException ex) {
