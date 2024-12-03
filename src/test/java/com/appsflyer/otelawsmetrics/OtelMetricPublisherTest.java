@@ -2,6 +2,7 @@ package com.appsflyer.otelawsmetrics;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.metrics.data.HistogramData;
@@ -30,6 +31,8 @@ class OtelMetricPublisherTest {
     private ExecutorService executor;
     private InMemoryMetricReader metricReader;
     private MetricPublisher metricPublisher;
+    private Attributes baseAttributes;
+    private static String basePrefix = "custom.prefix";
 
     @BeforeEach
     void setUp() {
@@ -38,6 +41,10 @@ class OtelMetricPublisherTest {
 
         // Set up an InMemoryMetricReader to capture metrics
         metricReader = InMemoryMetricReader.create();
+
+        // Setup some base attributes
+        baseAttributes = Attributes.of(AttributeKey.stringKey("custom.dimension.key.1"), "CustomDimensionValue.1",
+                AttributeKey.stringKey("custom.dimension.key.2"), "CustomDimensionValue.2");
 
         // Set up the SdkMeterProvider with the metric reader
         SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
@@ -53,7 +60,7 @@ class OtelMetricPublisherTest {
         GlobalOpenTelemetry.set(openTelemetrySdk);
 
         // Create an instance of OtelMetricPublisher
-        metricPublisher = new OtelMetricPublisher(GlobalOpenTelemetry.get(), "aws.sdk", executor);
+        metricPublisher = new OtelMetricPublisher(GlobalOpenTelemetry.get(), basePrefix, executor, baseAttributes);
     }
 
     @Test
@@ -75,7 +82,7 @@ class OtelMetricPublisherTest {
         assertEquals(1, exportedMetrics.size(), "Expected one metric to be exported");
 
         MetricData metricData = exportedMetrics.get(0);
-        assertEquals("aws.sdk.api_call_duration", metricData.getName());
+        assertEquals(basePrefix + ".api_call_duration", metricData.getName());
         assertEquals("The total time taken to finish a request (inclusive of all retries)", metricData.getDescription());
         assertEquals("ns", metricData.getUnit());
 
@@ -90,6 +97,10 @@ class OtelMetricPublisherTest {
         assertEquals("GetItem", point.getAttributes().get(AttributeKey.stringKey("request_operation_name")));
         assertEquals(true, point.getAttributes().get(AttributeKey.booleanKey("request_is_success")));
         assertEquals(0L, point.getAttributes().get(AttributeKey.longKey("request_retry_count")));
+        assertEquals("CustomDimensionValue.1", point.getAttributes()
+                .get(AttributeKey.stringKey("custom.dimension.key.1")));
+        assertEquals("CustomDimensionValue.2", point.getAttributes()
+                .get(AttributeKey.stringKey("custom.dimension.key.2")));
     }
 
     private MetricCollection createMockMetricCollection() {
