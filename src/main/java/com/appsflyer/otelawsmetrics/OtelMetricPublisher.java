@@ -52,7 +52,6 @@ public class OtelMetricPublisher implements MetricPublisher {
 
     public OtelMetricPublisher(OpenTelemetry openTelemetry, String metricPrefix,
                                Executor executor, Attributes baseAttributes) {
-
         Objects.requireNonNull(metricPrefix, "metricPrefix must not be null");
         Objects.requireNonNull(openTelemetry, "openTelemetry must not be null");
         Objects.requireNonNull(baseAttributes, "baseAttributes must not be null");
